@@ -49,7 +49,7 @@ class Term:
 
     def __open_serial_port_terminal(self, terminal_program):
         if shutil.which('putty'):
-            terminal_program = 'putty'
+            term_str = f"putty {self.port} -serial -sercfg {self.baud},8,n,1,N"
         elif shutil.which('screen'):
             terminal_program = 'screen'
         elif shutil.which('minicom'):

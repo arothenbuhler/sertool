@@ -1,5 +1,6 @@
 from setuptools import find_packages, setup
 from setuptools.extern.packaging.version import Version, InvalidVersion
+from setuptools import setup
 
 import os
 import subprocess
@@ -40,6 +41,8 @@ with open(FILE_NAME_BUILD_VERSION, 'w') as f:
     print(version, file=f)
 
 setup(
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     name='sertool',
     version=version,
     author='Adrian Rothenbuhler',

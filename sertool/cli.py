@@ -30,6 +30,7 @@ def open_serial_port(port_str, baud):
     if not slist.is_port_available(port):
         print("ERROR: {port_str} is already in use")
         return 1
+
     print(f"Opening port {port}")
     term = Term(port, baud)
     term.start()
