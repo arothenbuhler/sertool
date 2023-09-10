@@ -49,7 +49,15 @@ class Term:
 
     def __open_serial_port_terminal(self, terminal_program):
         if shutil.which('putty'):
-            term_str = f"putty {self.port} -serial -sercfg {self.baud},8,n,1,N"
+            term_cmd = [
+                'putty',
+                '-serial',
+                self.port,
+                '-sercfg',
+                str(self.baud),
+                ', 8N1'
+            ]
+            #terminal_program = f"putty {self.port} -serial -sercfg {self.baud},8,n,1,N"
         elif shutil.which('screen'):
             terminal_program = 'screen'
         elif shutil.which('minicom'):
@@ -58,8 +66,10 @@ class Term:
             print("No supported terminal program found.")
             return False
         
+        print(term_cmd)
+
         try:
-            subprocess.Popen([terminal_program, "-serial", self.port])
+            subprocess.Popen(term_cmd)
         except FileNotFoundError:
             print(f"{terminal_program} is not installed or not in the system path.")
         return True
