@@ -33,7 +33,7 @@ class SerialList:
         for i, serdev in enumerate(self.port_list):
             dev_str = f"{i+1}. {serdev[0]}"
             if test_port_avail:
-                if self.__is_port_available(serdev[0]):
+                if self.is_port_available(serdev[0]):
                     dev_str = dev_str + "\tAvailable"
                 else:
                     dev_str = dev_str + "\tIn use"
