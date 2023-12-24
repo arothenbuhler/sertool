@@ -1,3 +1,4 @@
+from colorama import Fore, Style
 import serial
 import serial.tools.list_ports
 
@@ -33,13 +34,16 @@ class SerialList:
         for i, serdev in enumerate(self.port_list):
             dev_str = f"{i+1}. {serdev[0]}"
             if test_port_avail:
+                print(dev_str, end='')
                 if self.is_port_available(serdev[0]):
-                    dev_str = dev_str + "\tAvailable"
+                    print(Fore.GREEN + "\tAvailable")
                 else:
-                    dev_str = dev_str + "\tIn use"
+                    print(Fore.RED + "\tIn use")
+                print(Style.RESET_ALL, end='')
+            else:
+                print(dev_str)
             if verbose_print:
-                dev_str = dev_str + f"\n\r\tDesc: {serdev[1]}\n\r\tHWID: {serdev[2]}"
-            print(dev_str)
+                print(f"\r\tDesc: {serdev[1]}\n\r\tHWID: {serdev[2]}")
                       
         if not self.port_list:
             print("No serial ports available.")

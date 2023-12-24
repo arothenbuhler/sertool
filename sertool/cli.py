@@ -33,8 +33,7 @@ def open_serial_port(port_str, baud):
 
     print(f"Opening port {port}")
     term = Term(port, baud)
-    term.start()
-    return 0
+    return term.start()
 
 
 def cli(argv):

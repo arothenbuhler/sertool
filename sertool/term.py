@@ -1,5 +1,3 @@
-import serial
-import threading
 import subprocess
 import shutil
 
@@ -11,61 +9,26 @@ class Term:
         self.baud = baud
 
 
-    def __open_serial_port_python(self, baud_rate):
-        try:
-            ser = serial.Serial(self.port, baud_rate)
-
-            def receive_serial():
-                while True:
-                    try:
-                        data = ser.readline().decode().rstrip()
-                        print(data)
-                    except UnicodeDecodeError:
-                        pass
-
-            def send_serial():
-                while True:
-                    try:
-                        input_data = input()
-                        ser.write(input_data.encode())
-                    except (KeyboardInterrupt, EOFError):
-                        ser.close()
-                        break
-
-            receive_thread = threading.Thread(target=receive_serial, daemon=True)
-            send_thread = threading.Thread(target=send_serial, daemon=True)
-
-            print(f"Serial port {self.port} opened. Press Ctrl+C to exit.")
-
-            receive_thread.start()
-            send_thread.start()
-
-            receive_thread.join()
-            send_thread.join()
-
-        except serial.SerialException as e:
-            print(f"Failed to open serial port {self.port}: {str(e)}")
-
-
-    def __open_serial_port_terminal(self, terminal_program):
+    def _open_serial_port_terminal(self):
+        wait_on_process = False
         if shutil.which('putty'):
             term_str = f"putty {self.port} -serial -sercfg {self.baud},8,n,1,N"
-        elif shutil.which('screen'):
-            terminal_program = 'screen'
         elif shutil.which('minicom'):
-            terminal_program = 'minicom'
+            term_str = f"minicom -D {self.port} -b {self.baud}"
         else:
-            print("No supported terminal program found.")
-            return False
-        
+            print("No terminal program detected. Using pyserial's internal terminal...\n\n")
+            term_str = f"python -m serial.tools.miniterm {self.port} {self.baud}"
+            wait_on_process = True
+
         try:
-            subprocess.Popen([terminal_program, "-serial", self.port])
+            proc = subprocess.Popen(term_str.split())
+            if wait_on_process:
+                proc.wait()
         except FileNotFoundError:
-            print(f"{terminal_program} is not installed or not in the system path.")
-        return True
+            print(f"Error opening port {self.port}")
+            return -1
+        return 0
 
 
     def start(self, term=None):
-        if self.__open_serial_port_terminal(term):
-            return
-        self.__open_serial_port_python()
+        return self._open_serial_port_terminal()
