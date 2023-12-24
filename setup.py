@@ -21,7 +21,7 @@ setup(
         ]
     },
     python_requires=">=3.8",
-    install_requires=["pyserial"],
+    install_requires=["pyserial", "colorama"],
     entry_points={
         "console_scripts": [
             "sertool=sertool.__main__:main",
